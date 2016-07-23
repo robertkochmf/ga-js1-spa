@@ -1,0 +1,26 @@
+{
+  "name": "itin",
+  "version": "1.0.0",
+  "description": "Simple itinerary builder",
+  "main": "main.js",
+  "dependencies": {
+    "local-web-server": "^1.2.6"
+  },
+  "devDependencies": {
+    "http-server": "^0.9.0"
+  },
+  "scripts": {
+    "start": "http-server app -a localhost"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robertkochmf/ga-js1-spa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robertkochmf/ga-js1-spa/issues"
+  },
+  "homepage": "https://github.com/robertkochmf/ga-js1-spa#readme"
+}

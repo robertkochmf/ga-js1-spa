@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Itin</title>
+  <link rel="stylesheet" href="https://npmcdn.com/normalize.css">
+  <!-- Material Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <!-- Material Styles -->
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.amber-orange.min.css" />
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="mdl-demo">
+
+
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+    <!-- Header -->
+    <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+      <div class="mdl-layout__header-row">
+      </div>
+      <div class="mdl-layout__header-row">
+        <h3>Itin</h3>
+      </div>
+      <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+
+        <!-- Add Collection Button -->
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--accent" id="add">
+          <i class="material-icons" role="presentation">add</i>
+          <span class="visuallyhidden">Add</span>
+        </button>
+
+      </div>
+    </header>
+
+    <main class="mdl-layout__content">
+      <div class="mdl-layout__tab-panel is-active" id="overview">
+
+        <section class="section--center mdl-grid mdl-grid--no-spacing ">
+
+          <!-- Signed Out State -->
+          <div class="demo-card-wide mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+              <h2 class="mdl-card__title-text">Welcome to Itin</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+              Itin is a helpful itinerary planner. Add places that you want to go to a collection, share with friends and never forget.
+            </div>
+            <div class="mdl-card__actions mdl-card--border">
+              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect sign-in">
+                Login with Google
+              </a>
+            </div>
+          </div>
+
+        </section>
+
+        <section class="section--center mdl-grid mdl-grid--no-spacing">
+
+          <!-- Create Collection -->
+          <div class="demo-card-wide mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+              <h2 class="mdl-card__title-text">Begin by creating a new collection</h2>
+            </div>
+            <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
+              <form id="new-collection" action="#">
+                <div class="mdl-textfield mdl-js-textfield">
+                  <input class="mdl-textfield__input" type="text" id="collection-name">
+                  <label class="mdl-textfield__label" for="collection-name">Name your collection</label>
+                </div>
+              </form>
+            </div>
+            <div class="mdl-card__actions">
+              <a href="#" class="mdl-button create-collection">Create Collection</a>
+            </div>
+          </div>
+
+        </section>
+
+        <section class="mdl-grid collection-list">
+
+
+
+        </section>
+
+
+
+        <section class="section--center mdl-grid mdl-grid--no-spacing">
+
+          <!-- Place Search -->
+          <div class="demo-card-wide mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+              <h2 class="mdl-card__title-text">Search for a place</h2>
+            </div>
+            <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
+              <form id="search-form" action="#">
+                <div class="mdl-textfield mdl-js-textfield">
+                  <input class="mdl-textfield__input" type="text" id="search-field">
+                  <label class="mdl-textfield__label" for="search-field">Search for a place</label>
+                </div>
+              </form>
+            </div>
+            <div class="mdl-card__actions">
+              <a href="#" class="mdl-button search-places">Search</a>
+            </div>
+          </div>
+
+        </section>
+
+        <section class="mdl-grid search-results">
+
+
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Material Lite -->
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+  <!-- DOM Utility functions -->
+  <script src="https://rawgit.com/jesstelford/a981e6877034231bd43b526a07b3a7b4/raw/js1-utilities.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/3.2.0/firebase.js"></script>
+  <!-- Our code -->
+  <script src="main.js"></script>
+</body>
+</html>

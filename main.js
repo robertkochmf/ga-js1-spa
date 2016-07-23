@@ -127,7 +127,7 @@
       place.rating = obj.rating
       place.location.lng = obj.geometry.location.lng
       place.location.lat = obj.geometry.location.lat
-
+      // console.log(obj);
       return place;
 
     });
@@ -140,8 +140,25 @@
     throw err;
   });
 
+  var photoRequest = 'https://crossorigin.me/https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference='
+  var keyURL = `&key=${placeKey}`
+
+  function getPhoto(reference) {
+    fetch(photoRequest + reference + keyURL).then(function(response){
+      return response.text();
+    }).then(function(img){
+      var img = new Image()
+      document.querySelector('.instafeed').innerHTML = img
+    })
+  }
+
+  getPhoto('CoQBdwAAALSCW0bvgawPn-RlZSrK-DNNwj5r-eDJVczBOGOCr-e-RzZsiWYPDZOWu78st6bSq-SD7GecWW-hklwWliCY02NLRxpQYjqtIMeiO_4H_DKQlXwZrfu_QsvzRdcqLChfdY3CHRTuroUS7C-niMdTEZ4wpi4dWHKUhOPSkQdcRBDiEhDiJoh3zWML6UtYhNmf9pBGGhQnnU7CjIygk8FOHJ2PQv1CDkrquw')
+
+
   var container = document.querySelector('#container')
   var state;
+
+
 
   function initState() {
     state = {

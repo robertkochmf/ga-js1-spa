@@ -463,9 +463,7 @@ function renderCollectionView(state, into) {
    console.log("header rendering");
    console.log(state.currentUser);
 
-   if (into.classList.contains('mdl-layout--fixed-drawer')){
-     into.classList.remove('mdl-layout--fixed-drawer');
-   }
+   into.classList.remove('mdl-layout--fixed-drawer');
 
    into.innerHTML = `
    <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
@@ -481,16 +479,11 @@ function renderCollectionView(state, into) {
       ${state.currentUser ? renderAddButton() : "" }
      </div>
    </header>
-   <main class="mdl-layout__content" id="overview">
-
-
-
-   </main>
+   <main class="mdl-layout__content" id="overview"></main>
 
    `
 
  }
-
 
  function renderAddButton() {
    return`

@@ -232,10 +232,6 @@
 
 
   var container = document.querySelector('.container')
-  var searchContainer = document.querySelector('.search-results')
-  var mdlContainer = document.querySelector('.mdl-layout')
-  var modalContainer = document.querySelector('.modal-container')
-  var mainContentArea = document.querySelector('#overview')
   var state;
 
   function initState() {
@@ -279,11 +275,11 @@
 
 
   //Render Template for Search Results
-  function renderSearchResults(data, into){
+  function renderSearchResults(state, into){
 
     console.log('rendering search results');
 
-    var places = data.map(function(item){
+    var places = state.search.items.map(function(item){
       return `
       <div class="mdl-card mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-shadow--2dp place-card" data-id="${item.id}">
         <div class="mdl-card__media">
@@ -306,12 +302,35 @@
     });
 
     into.innerHTML = `
-    <section class="mdl-grid search-results">
-      <div class="mdl-cell mdl-cell--12-col search-title">
-        <h2>You searched for</h2>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
+
+      <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <button class="mdl-button mdl-js-button mdl-button--icon back-home">
+              <i class="material-icons">arrow_back</i>
+            </button>
+          <div class="mdl-layout-spacer"></div>
+            ${state.currentUser ? renderSignOut() : "" }
+        </div>
+      </header>
+
+      <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">${state.currentCollection.data.name}</span>
+        <nav class="mdl-navigation">
+         ${renderAddedPlaces(state)}
+        </nav>
       </div>
-      ${places.join('')}
-    </section>
+      <main class="mdl-layout__content" id="overview">
+        <section class="mdl-grid search-results">
+          <div class="mdl-cell mdl-cell--12-col search-title">
+            <h2>You searched for</h2>
+          </div>
+          ${places.join('')}
+        </section>
+      </main>
+
+    </div>
+
     `
 }
 
@@ -362,30 +381,31 @@ function renderCollectionView(state, into) {
 
   console.log('rendering collection view');
 
-  into.classList.add('mdl-layout', 'mdl-layout--fixed-drawer', 'mdl-layout', 'mdl-layout--fixed-header');
-
   into.innerHTML = `
-  <header class="mdl-layout__header">
-    <div class="mdl-layout__header-row">
-        <button class="mdl-button mdl-js-button mdl-button--icon back-home">
-          <i class="material-icons">arrow_back</i>
-        </button>
-      <div class="mdl-layout-spacer"></div>
-      <button class="mdl-button mdl-js-button sign-out">
-        Sign Out
-      </button>
-    </div>
-  </header>
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
 
-  <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title">${state.data.name}</span>
-    <nav class="mdl-navigation">
-     ${renderAddedPlaces(state)}
-    </nav>
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+          <button class="mdl-button mdl-js-button mdl-button--icon back-home">
+            <i class="material-icons">arrow_back</i>
+          </button>
+        <div class="mdl-layout-spacer"></div>
+          ${state.currentUser ? renderSignOut() : "" }
+      </div>
+    </header>
+
+    <div class="mdl-layout__drawer">
+      <span class="mdl-layout-title">${state.currentCollection.data.name}</span>
+      <nav class="mdl-navigation">
+       ${renderAddedPlaces(state)}
+      </nav>
+    </div>
+    <main class="mdl-layout__content" id="overview">
+    ${renderSearchArea(state)}
+    </main>
+
   </div>
-  <main class="mdl-layout__content" id="overview">
-  ${renderSearchArea(state)}
-  </main>
+
   `
 
   componentHandler.upgradeDom();
@@ -423,20 +443,20 @@ function renderCollectionView(state, into) {
  function renderAddedPlaces(state){
    console.log('rendering added places');
 
-   console.log(state.data.posts);
+   console.log(state.currentCollection.data.posts);
 
-   if (state.data.posts !== undefined) {
+   if (state.currentCollection.data.posts !== undefined) {
      return `
-       ${Object.keys(state.data.posts).map(function(key){
+       ${Object.keys(state.currentCollection.data.posts).map(function(key){
          return `
          <div class="mdl-card mdl-shadow--2dp mdl-card--horizontal">
            <div class="mdl-card__media">
-             <img src="${state.data.posts[key].photo}" alt="img">
+             <img src="${state.currentCollection.data.posts[key].photo}" alt="img">
            </div>
              <div class="mdl-card__title">
-               <h2 class="mdl-card__title-text">${state.data.posts[key].name}</h2>
+               <h2 class="mdl-card__title-text">${state.currentCollection.data.posts[key].name}</h2>
              </div>
-             <div class="mdl-card__supporting-text">${state.data.posts[key].address}</div>
+             <div class="mdl-card__supporting-text">${state.currentCollection.data.posts[key].address}</div>
          </div>
          `
        }).join('')}
@@ -459,9 +479,9 @@ function renderCollectionView(state, into) {
    console.log("header rendering");
    console.log(state.currentUser);
 
-   if (into.classList.contains('mdl-layout--fixed-drawer')){
-     into.classList.remove('mdl-layout--fixed-drawer');
-   }
+  //  if (into.classList.contains('mdl-layout--fixed-drawer')){
+  //    into.classList.remove('mdl-layout--fixed-drawer');
+  //  }
 
    into.innerHTML = `
 
@@ -491,6 +511,8 @@ function renderCollectionView(state, into) {
    </div>
 
    `
+
+   componentHandler.upgradeDom();
 
  }
 
@@ -553,15 +575,6 @@ function renderModal() {
 
 
 
-
-
-
-
-
-
-
-
-
   // Create Collection
   delegate('body', 'click', 'a.create-collection', function(event){
 
@@ -577,7 +590,7 @@ function renderModal() {
     writeNewCollection(state.currentUser.uid, collectionName).then(function() {
 
       console.log(state.currentCollection);
-      renderCollectionView(state.currentCollection, mdlContainer);
+      renderCollectionView(state, container);
       modalClose();
 
 
@@ -591,9 +604,6 @@ function renderModal() {
   // Google Places Search
   delegate('body', 'click', 'a.search-places', function(event){
 
-    // TODO: This is wrong. How do I seperate this from the DOM. that container it gets inserted into is dynamically generated.
-    var mainContentArea = document.querySelector('#overview')
-
     // Get user input value for collection name
     var searchField = document.querySelector('#search-field')
     var searchValue = searchField.value;
@@ -605,7 +615,7 @@ function renderModal() {
     //Run Google Places Search
     runSearch(searchValue).then(function(){
       console.log(state.search.items);
-      renderSearchResults(state.search.items, mainContentArea);
+      renderSearchResults(state, container);
     });
 
   });
@@ -629,7 +639,7 @@ function renderModal() {
 
     writeNewPost(state.currentUser.uid, match).then(function(){
 
-      renderCollectionView(state.currentCollection, mdlContainer);
+      renderCollectionView(state, container);
 
     });
 
@@ -653,7 +663,7 @@ function renderModal() {
     console.log(state.currentCollection);
     console.log(state);
 
-    renderCollectionView(state.currentCollection, mdlContainer)
+    renderCollectionView(state, container);
 
   });
 
@@ -683,9 +693,7 @@ function renderModal() {
   delegate('body', 'click', '.back-home', function(event){
 
     console.log(event.delegateTarget);
-    renderInitialLoad(state, mdlContainer)
-    renderCollectionList(state, document.querySelector('#overview'))
-
+    renderInitialLoad(state, container)
 
   });
 

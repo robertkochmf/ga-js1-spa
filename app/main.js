@@ -52,8 +52,6 @@
     var user = firebase.auth().currentUser;
     state.currentUser = user
 
-    renderInitialLoad(state, mdlContainer)
-
     var name, email, photoUrl, uid;
 
     if (user != null) {
@@ -68,19 +66,17 @@
 
       writeUserData(uid, name, email, photoUrl);
 
-      //Setup listener on user-posts firebase DB
+      //Get all the juice for a user from FireBase
       listenForCollectionChanges(uid).then(function(){
-
-        renderCollectionList(state, document.querySelector('#overview'))
-        renderModal(modalContainer)
-
+        renderInitialLoad(state, container)
       });
 
 
     } else {
       console.log('no user is signed in');
       initState();
-      renderLoggedOut(document.querySelector('#overview'));
+      renderInitialLoad(state, container)
+      // renderLoggedOut(document.querySelector('#overview'));
     }
 
   });
@@ -235,7 +231,7 @@
 
 
 
-  var container = document.querySelector('#container')
+  var container = document.querySelector('.container')
   var searchContainer = document.querySelector('.search-results')
   var mdlContainer = document.querySelector('.mdl-layout')
   var modalContainer = document.querySelector('.modal-container')
@@ -259,7 +255,7 @@
 
   // Render Template or logged out user
   function renderLoggedOut(into) {
-    into.innerHTML = `
+    return `
     <section class="section--center mdl-grid mdl-grid--no-spacing ">
       <div class="demo-card-wide mdl-card mdl-shadow--2dp">
         <div class="mdl-card__title">
@@ -325,7 +321,7 @@
 
 
 //Render Template for Collection List
-function renderCollectionList(state, into){
+function renderCollectionList(state){
 
   console.log('rendering collections');
 
@@ -349,7 +345,7 @@ function renderCollectionList(state, into){
     `
   }
 
-  into.innerHTML = `
+  return `
   <section class="mdl-grid collection-list">
   <div class="mdl-cell mdl-cell--12-col collections-title">
     <h2>Collections</h2>
@@ -468,24 +464,31 @@ function renderCollectionView(state, into) {
    }
 
    into.innerHTML = `
-   <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
-     <div class="mdl-layout__header-row">
-       <div class="mdl-layout-spacer">
+
+   <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+     <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+       <div class="mdl-layout__header-row">
+         <div class="mdl-layout-spacer">
+         </div>
+         ${state.currentUser ? renderSignOut() : "" }
        </div>
-       ${state.currentUser ? renderSignOut() : "" }
-     </div>
-     <div class="mdl-layout__header-row">
-       <h3>Trip Plannr</h3>
-     </div>
-     <div class="mdl-layout__header-row button-container">
-      ${state.currentUser ? renderAddButton() : "" }
-     </div>
-   </header>
-   <main class="mdl-layout__content" id="overview">
+       <div class="mdl-layout__header-row">
+         <h3>Trip Plannr</h3>
+       </div>
+       <div class="mdl-layout__header-row button-container">
+        ${state.currentUser ? renderAddButton() : "" }
+       </div>
+     </header>
+     <main class="mdl-layout__content" id="overview">
+      ${state.currentUser ? renderCollectionList(state) : renderLoggedOut()}
 
+     </main>
+   </div>
 
-
-   </main>
+   <div class="modal-container">
+    ${state.currentUser ? renderModal() : "" }
+   </div>
 
    `
 
@@ -519,8 +522,8 @@ function renderLoading(){
 
 }
 
-function renderModal(into) {
-  into.innerHTML = `
+function renderModal() {
+  return `
   <!-- New Collection Modal -->
   <div class="add-collection-modal">
     <div class="demo-card-wide mdl-card mdl-shadow--2dp">

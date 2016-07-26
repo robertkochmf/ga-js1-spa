@@ -56,6 +56,9 @@
 
     if (user != null) {
 
+      state.loading = true;
+      renderLoading(container)
+
       name = user.displayName;
       email = user.email;
       photoUrl = user.photoURL;
@@ -83,9 +86,12 @@
 
   function listenForCollectionChanges(uid) {
 
+    state.loading = true;
+
     return new Promise(function(resolve,reject){
 
       db.ref(`user-posts/${state.currentUser.uid}/`).on('value', function(snapshot) {
+
 
         var exists = snapshot.exists();
 
@@ -500,10 +506,11 @@ function renderCollectionView(state, into) {
         ${state.currentUser ? renderAddButton() : "" }
        </div>
      </header>
+
      <main class="mdl-layout__content" id="overview">
       ${state.currentUser ? renderCollectionList(state) : renderLoggedOut()}
-
      </main>
+
    </div>
 
    <div class="modal-container">
@@ -515,6 +522,7 @@ function renderCollectionView(state, into) {
    componentHandler.upgradeDom();
 
  }
+
 
 
  function renderAddButton() {
@@ -532,16 +540,13 @@ function renderCollectionView(state, into) {
    `
  }
 
-function renderLoading(){
+function renderLoading(into){
 
-  var spinner = document.querySelector('.mdl-spinner')
+  into.innerHTML = `
+  <div class="mdl-spinner is-active mdl-js-spinner"></div>
+  `
 
-  if (state.loading == true){
-    spinner.classList.toggle('is-active')
-  }else {
-    spinner.classList.toggle('is-active')
-  }
-
+  componentHandler.upgradeDom();
 }
 
 function renderModal() {

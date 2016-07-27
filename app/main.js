@@ -8,7 +8,7 @@
 (function() {
 
   // Google API
-  var placeKey = 'AIzaSyCnc3YBPzVZ5U_oFHiTY1KWKIzDvrGuOKo'
+  var placeKey = ''
   var placeRequest = 'https://crossorigin.me/https://maps.googleapis.com/maps/api/place/textsearch/json?query='
 
   // Initialize Firebase

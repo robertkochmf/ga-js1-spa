@@ -212,10 +212,14 @@
           place.location.lng = obj.geometry.location.lng
           place.location.lat = obj.geometry.location.lat
 
+          if (obj.website !== undefined) {
+            place.website = obj.website
+          }
+
           if (obj.photos !== undefined) {
             place.photo = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1200&photoreference=${obj.photos[0].photo_reference}&key=${placeKey}`
           } else{
-            place.photo = 'http://i.giphy.com/xT5LMN7rhj8hHdwTqE.gif'
+            place.photo = '/placeholder.jpg'
           }
 
           return place;
@@ -264,7 +268,7 @@
           <h2 class="mdl-card__title-text">Welcome to Trip Plannr</h2>
         </div>
         <div class="mdl-card__supporting-text">
-          Trip Plannr is a helpful trip planner. Add places that you want to go to a collection, share with friends and never forget.
+          Trip Plannr is a helpful trip planner. Add places that you want to go to a collection, share with friends and plan your next big adventure.
         </div>
         <div class="mdl-card__actions mdl-card--border">
           <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect sign-in">
@@ -283,8 +287,6 @@
   //Render Template for Search Results
   function renderSearchResults(state, into){
 
-    console.log('rendering search results');
-
     var places = state.search.items.map(function(item){
       return `
       <div class="mdl-card mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-shadow--2dp place-card" data-id="${item.id}">
@@ -298,7 +300,6 @@
 
         <div class="mdl-card__supporting-text">
           <p>${item.address}</p>
-          <p>${item.rating}</p>
         </div>
         <div class="mdl-card__actions">
           <a href="#" class="mdl-button add-place">Add to Collection</a>
@@ -334,10 +335,10 @@
           ${places.join('')}
         </section>
       </main>
-
     </div>
-
     `
+
+    componentHandler.upgradeDom();
 }
 
 
@@ -347,8 +348,6 @@
 
 //Render Template for Collection List
 function renderCollectionList(state){
-
-  console.log('rendering collections');
 
   if (state.collections !== null) {
     var collections = Object.keys(state.collections).map(function(key){
@@ -385,8 +384,6 @@ function renderCollectionList(state){
 
 function renderCollectionView(state, into) {
 
-  console.log('rendering collection view');
-
   into.innerHTML = `
   <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
 
@@ -409,18 +406,13 @@ function renderCollectionView(state, into) {
     <main class="mdl-layout__content" id="overview">
     ${renderSearchArea(state)}
     </main>
-
   </div>
-
   `
-
   componentHandler.upgradeDom();
 
- }
+}
 
  function renderSearchArea(state){
-
-   console.log('rendering search area');
 
    return `
    <section class="section--center mdl-grid mdl-grid--no-spacing">
@@ -446,23 +438,25 @@ function renderCollectionView(state, into) {
    componentHandler.upgradeDom();
  }
 
- function renderAddedPlaces(state){
-   console.log('rendering added places');
 
-   console.log(state.currentCollection.data.posts);
+// Render a users added places in the drawer
+ function renderAddedPlaces(state){
 
    if (state.currentCollection.data.posts !== undefined) {
      return `
        ${Object.keys(state.currentCollection.data.posts).map(function(key){
          return `
-         <div class="mdl-card mdl-shadow--2dp mdl-card--horizontal">
+         <div class="mdl-card mdl-shadow--2dp mdl-card--horizontal" data-id="${key}">
            <div class="mdl-card__media">
              <img src="${state.currentCollection.data.posts[key].photo}" alt="img">
            </div>
-             <div class="mdl-card__title">
-               <h2 class="mdl-card__title-text">${state.currentCollection.data.posts[key].name}</h2>
-             </div>
-             <div class="mdl-card__supporting-text">${state.currentCollection.data.posts[key].address}</div>
+           <div class="mdl-card__title">
+             <h2 class="mdl-card__title-text">${state.currentCollection.data.posts[key].name}</h2>
+           </div>
+           <div class="mdl-card__supporting-text">${state.currentCollection.data.posts[key].address}</div>
+           <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored delete">
+            <i class="material-icons">delete</i>
+          </button>
          </div>
          `
        }).join('')}
@@ -472,22 +466,15 @@ function renderCollectionView(state, into) {
      <div class="mdl-card__supporting-text">
       Your collection is currently empty. Start by searching for a place and adding it your collection.
     </div>
-
-
      `
+
    }
 
    componentHandler.upgradeDom();
  }
 
+ //Render the intial view
  function renderInitialLoad(state,into){
-
-   console.log("header rendering");
-   console.log(state.currentUser);
-
-  //  if (into.classList.contains('mdl-layout--fixed-drawer')){
-  //    into.classList.remove('mdl-layout--fixed-drawer');
-  //  }
 
    into.innerHTML = `
 
@@ -518,13 +505,11 @@ function renderCollectionView(state, into) {
    </div>
 
    `
-
    componentHandler.upgradeDom();
 
  }
 
-
-
+// Render the add a colleciton button
  function renderAddButton() {
    return`
    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--accent" id="add">
@@ -534,12 +519,14 @@ function renderCollectionView(state, into) {
    `
  }
 
+ // Render the sign out button
  function renderSignOut(){
    return`
    <button class="mdl-button mdl-js-button sign-out">Sign Out</button>
    `
  }
 
+// Render the loading spinner
 function renderLoading(into){
 
   into.innerHTML = `
@@ -549,6 +536,7 @@ function renderLoading(into){
   componentHandler.upgradeDom();
 }
 
+// Render the add collection modal
 function renderModal() {
   return `
   <!-- New Collection Modal -->
@@ -577,9 +565,6 @@ function renderModal() {
   `
 }
 
-
-
-
   // Create Collection
   delegate('body', 'click', 'a.create-collection', function(event){
 
@@ -604,8 +589,6 @@ function renderModal() {
   });
 
 
-
-
   // Google Places Search
   delegate('body', 'click', 'a.search-places', function(event){
 
@@ -619,15 +602,10 @@ function renderModal() {
 
     //Run Google Places Search
     runSearch(searchValue).then(function(){
-      console.log(state.search.items);
       renderSearchResults(state, container);
     });
 
   });
-
-
-
-
 
   // Add Item to Collection
   delegate('body', 'click', 'a.add-place', function(event){
@@ -640,70 +618,58 @@ function renderModal() {
         return search.id === key;
     })[0];
 
-    console.log(match);
-
     writeNewPost(state.currentUser.uid, match).then(function(){
 
       renderCollectionView(state, container);
 
     });
-
-
   });
 
-
-
-
-
-  // Add Item to Collection
+  // View a collection
   delegate('body', 'click', 'a.view-collection', function(event){
-
-    console.log(event.delegateTarget);
 
     var key = getKeyFromClosestElement(event.delegateTarget)
 
     state.currentCollection.id = key
     state.currentCollection.data = state.collections[key]
 
-    console.log(state.currentCollection);
-    console.log(state);
-
     renderCollectionView(state, container);
 
   });
 
+  // Delete Item from Collection
+  delegate('body', 'click', '.delete', function(event){
 
+    var key = getKeyFromClosestElement(event.delegateTarget)
 
+    // Remove the post from the local state currentCollection
+    delete state.currentCollection.data.posts[key]
 
+    // Remove the post from firebase
+    db.ref('/user-posts/' + state.currentUser.uid + '/collections/' + state.currentCollection.id + '/posts/' + key + '/').remove().then(function(){
+
+      renderCollectionView(state, container);
+
+    });
+
+  });
 
   // Toggle Add Collection modal
   delegate('body', 'click', '#add', function(event){
 
-    console.log(event.delegateTarget);
     document.body.classList.add('modal-open');
 
   });
 
-
-
-
-  // Toggle Add Collection modal
+  // Close Collection modal
   delegate('body', 'click', '.close-modal', function(event){
-    console.log(event.delegateTarget);
     modalClose();
   });
 
-
   // Return back to inital view
   delegate('body', 'click', '.back-home', function(event){
-
-    console.log(event.delegateTarget);
     renderInitialLoad(state, container)
-
   });
-
-
-
 
   // Close Modal on trigger
   function modalClose() {
@@ -714,9 +680,6 @@ function renderModal() {
       return
     }
   }
-
-
-
 
   //Utility function to get closest Data ID
   function getKeyFromClosestElement(element) {

@@ -1,11 +1,15 @@
 /**
- * Project 3: SPA
+ * Trip Plannr
  * ====
  *
- * See the README.md for instructions
+ *
  */
 
 (function() {
+
+  // Google API
+  var placeKey = 'AIzaSyCnc3YBPzVZ5U_oFHiTY1KWKIzDvrGuOKo'
+  var placeRequest = 'https://crossorigin.me/https://maps.googleapis.com/maps/api/place/textsearch/json?query='
 
   // Initialize Firebase
   var config = {
@@ -19,9 +23,7 @@
   //Firebase Database
   var db = firebase.database();
 
-  // User Account Setup
-
-
+  // Google Sign In
   function authSignIn() {
     var provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider).catch(function(error) {
@@ -29,24 +31,27 @@
     });
   };
 
-  // TODO: change delegate to header container
+  //Sign In
   delegate('body', 'click', '.sign-in', function(event){
     authSignIn();
   });
 
+  //Google Sign Out
   function authSignOut () {
     firebase.auth().signOut().then(function() {
-      console.log('signed out');
+      console.log('No user is signed in');
     }, function(error) {
       throw error;
     });
   };
 
-  // TODO: change delegate to header container
+  //Sign Out
   delegate('body', 'click', '.sign-out', function(event){
     authSignOut();
   });
 
+
+  //Watch for user state change
   firebase.auth().onAuthStateChanged(function(user) {
 
     var user = firebase.auth().currentUser;
@@ -79,11 +84,12 @@
       console.log('no user is signed in');
       initState();
       renderInitialLoad(state, container)
-      // renderLoggedOut(document.querySelector('#overview'));
     }
 
   });
 
+
+  // Listen for changes to a user's info in Firebase
   function listenForCollectionChanges(uid) {
 
     state.loading = true;
@@ -92,17 +98,12 @@
 
       db.ref(`user-posts/${state.currentUser.uid}/`).on('value', function(snapshot) {
 
-
         var exists = snapshot.exists();
 
         if (exists){
 
           state.collections = snapshot.child("collections").val();
-          console.log(state.collections);
-          console.log(state);
-
         } else {
-          console.error('user doesnt have any collections');
           state.collections = null;
         }
 
@@ -114,9 +115,7 @@
 
    }
 
-
-
-
+   //Add user-info to firebase DB
   function writeUserData(uid, name, email, photo) {
     db.ref('users/' + uid).set({
       username: name,
@@ -125,7 +124,7 @@
     });
   };
 
-  //Is there a way to do this better, rather than having so many parameters
+  // Add place to firebase DB
   function writeNewPost(uid, obj) {
 
     return new Promise(function(resolve,reject){
@@ -147,16 +146,12 @@
 
           db.ref('/user-posts/' + uid + '/collections/' + state.currentCollection.id).once("value").then(function(snapshot){
 
-            console.log(snapshot.val());
             state.currentCollection.id = snapshot.key
             state.currentCollection.data = snapshot.val()
             resolve();
 
           })
-
-
         });
-
     });
 
   };
@@ -186,10 +181,7 @@
   };
 
 
-  var placeKey = 'AIzaSyCnc3YBPzVZ5U_oFHiTY1KWKIzDvrGuOKo'
-  var placeRequest = 'https://crossorigin.me/https://maps.googleapis.com/maps/api/place/textsearch/json?query='
-
-
+  // Run a text search query on Google Places
   function runSearch(query) {
 
     return new Promise(function(resolve,reject){
@@ -694,8 +686,5 @@ function renderModal() {
     // Extract and return that attribute
     return closestItemWithId.getAttribute('data-id');
   }
-
-
-
 
 })()

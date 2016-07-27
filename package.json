@@ -1,7 +1,7 @@
 {
   "name": "itin",
   "version": "1.0.0",
-  "description": "Simple itinerary builder",
+  "description": "Trip planner using Google Places API",
   "main": "main.js",
   "dependencies": {
     "local-web-server": "^1.2.6"
